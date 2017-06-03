@@ -795,8 +795,12 @@ findnext(Does, State, Next) :-
 % create a random player to test UI
 
 random_move(Role, State, Move) :-
+    (\+terminal,
     findlegals(Role, State, Legals),
-    random_member(Move, Legals).
+    random_member(Move, Legals))
+    ;
+    (terminal,
+    Move = noop).
 
 % http server stuff as explained at http://eu.swi-prolog.org/howto/http
 
@@ -809,9 +813,12 @@ move_handler(Request) :-
     findnext(Move, State, NextState),
     random_move(AIplayerString, NextState, AIMove),
     findnext(AIMove, NextState, Next),
+    % temporarily hardwiring human player as red
     findlegals(red, Next, Legals),
+    goal(red, Reward),
+    ((terminal, Terminal = true) ; (\+terminal, Terminal = false)),
     format('Content-type: application/x-www-form-urlencoded~n~n', []),
-    format('state=~w&legals=~w&aiplayer=~w', [Next, Legals, AIplayer]).
+    format('state=~w&legals=~w&aiplayer=~w&reward=~w&gameover=~w', [Next, Legals, AIplayer, Reward, Terminal]).
 
 main :-
   http_server(http_dispatch, [port(3000)]),

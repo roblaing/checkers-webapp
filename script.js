@@ -103,8 +103,6 @@
     };
 
     Board.prototype.selectMove = function (event) {
-        // cases
-        // does(red,doublejump(wp,e,4,c,6,e,8)
         var idx;
         var lenmove;
         var rect = this.canvas.getBoundingClientRect();
@@ -154,6 +152,8 @@
             termstr = termstr.replace(/\)\,/g, ") ");
             return termstr.split(" ");
         };
+        var terminal;
+        var reward;
         // Step 2 – Handling the server response
         if (this.httpRequest.readyState === XMLHttpRequest.DONE) {
             // Everything is good, the response was received.
@@ -161,13 +161,17 @@
                 var response_array = this.httpRequest.responseText.split("&");
                 this.state = terms2lst(response_array[0].slice(6));
                 this.legals = terms2lst(response_array[1].slice(7));
-                this.cells = this.state.map(function(cell) {return cell.replace(/\(/g,",").replace(/\)/g, "").split(",");});
-                this.cells = this.cells.filter(function(term) {return term[0] === "cell";});
-                this.cells = this.cells.map(function(cell) {return cell.slice(1);});
-                this.moves = this.legals.map(function(move) {return move.replace(/\(/g,",").replace(/\)/g, "").split(",");});
-                var flash = document.querySelector("#flash");
-                flash.textContent = this.legals;
-                this.draw();
+                reward = response_array[3].slice(7);
+                if (response_array[4].slice(9) === "true") {
+                    var flash = document.querySelector("#flash");
+                    flash.textContent = "Game Over!";
+                } else {
+                    this.cells = this.state.map(function(cell) {return cell.replace(/\(/g,",").replace(/\)/g, "").split(",");});
+                    this.cells = this.cells.filter(function(term) {return term[0] === "cell";});
+                    this.cells = this.cells.map(function(cell) {return cell.slice(1);});
+                    this.moves = this.legals.map(function(move) {return move.replace(/\(/g,",").replace(/\)/g, "").split(",");});
+                    this.draw();
+                }
             } else {
                 alert("There was a problem with the request.");
             }
@@ -176,38 +180,8 @@
         }
     };
 
-
-/*
-var makeRequest = function (event) {
-    move = event.currentTarget.textContent;
-    state = "[" + state.toString() + "]";
-    aiplayer = "black"
-    // https://developer.mozilla.org/en-US/docs/AJAX/Getting_Started
-    // Step 1 – How to make an HTTP request
-    httpRequest = new XMLHttpRequest();
-    if (!httpRequest) {
-      alert("Giving up :( Cannot create an XMLHTTP instance");
-      return false;
-    }
-    httpRequest.onreadystatechange = makeMoves;
-    httpRequest.open("POST", "/move");
-    httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    httpRequest.send("move=" + move + "&state=" + state + "&aiplayer=" + aiplayer);
-};
-*/
-
 var board = new Board();
 board.draw();
-
-
-//var legalsList = document.querySelector("#legals");
-//legalsList.innerHTML = "";
-
-// var cells = prolog2js(state).filter(function(term) {return term[0] === "cell";});
-
-// document.getElementById("state").textContent = cells;
-
-
 
 }());
 

@@ -173,13 +173,12 @@
                 var terminaltxt = document.querySelector("#terminal");
                 terminaltxt.textContent = terminal;
                 */
-                if (terminal === "false") {
-                    this.cells = this.state.map(function(cell) {return cell.replace(/\(/g,",").replace(/\)/g, "").split(",");});
-                    this.cells = this.cells.filter(function(term) {return term[0] === "cell";});
-                    this.cells = this.cells.map(function(cell) {return cell.slice(1);});
-                    this.moves = this.legals.map(function(move) {return move.replace(/\(/g,",").replace(/\)/g, "").split(",");});
-                    this.draw();
-                } else {
+                this.cells = this.state.map(function(cell) {return cell.replace(/\(/g,",").replace(/\)/g, "").split(",");});
+                this.cells = this.cells.filter(function(term) {return term[0] === "cell";});
+                this.cells = this.cells.map(function(cell) {return cell.slice(1);});
+                this.moves = this.legals.map(function(move) {return move.replace(/\(/g,",").replace(/\)/g, "").split(",");});
+                this.draw();
+                if (terminal === "true") {
                     alert("Game Over!");
                 }
             } else {

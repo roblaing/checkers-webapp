@@ -152,8 +152,6 @@
             termstr = termstr.replace(/\)\,/g, ") ");
             return termstr.split(" ");
         };
-        var terminal;
-        var reward;
         // Step 2 – Handling the server response
         if (this.httpRequest.readyState === XMLHttpRequest.DONE) {
             // Everything is good, the response was received.
@@ -161,16 +159,28 @@
                 var response_array = this.httpRequest.responseText.split("&");
                 this.state = terms2lst(response_array[0].slice(6));
                 this.legals = terms2lst(response_array[1].slice(7));
-                reward = response_array[3].slice(7);
-                if (response_array[4].slice(9) === "true") {
-                    var flash = document.querySelector("#flash");
-                    flash.textContent = "Game Over!";
-                } else {
+                var reward = response_array[3].slice(7);
+                var terminal = response_array[4].slice(9);
+                /*
+                var statetxt = document.querySelector("#state");                
+                statetxt.textContent = this.state;
+                var legalstxt = document.querySelector("#legals");                
+                legalstxt.textContent = this.legals;
+                var aiplayertxt = document.querySelector("#aiplayer");                
+                aiplayertxt.textContent = this.ai_player;
+                var rewardtxt = document.querySelector("#reward");
+                rewardtxt.textContent = reward;
+                var terminaltxt = document.querySelector("#terminal");
+                terminaltxt.textContent = terminal;
+                */
+                if (terminal === "false") {
                     this.cells = this.state.map(function(cell) {return cell.replace(/\(/g,",").replace(/\)/g, "").split(",");});
                     this.cells = this.cells.filter(function(term) {return term[0] === "cell";});
                     this.cells = this.cells.map(function(cell) {return cell.slice(1);});
                     this.moves = this.legals.map(function(move) {return move.replace(/\(/g,",").replace(/\)/g, "").split(",");});
                     this.draw();
+                } else {
+                    alert("Game Over!");
                 }
             } else {
                 alert("There was a problem with the request.");

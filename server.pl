@@ -34,6 +34,7 @@ move_handler(Request) :-
 main :-
   consult('checkers.pl'),
   consult('ggp.pl'),
+  consult('ggp_minimax.pl'),
   http_server(http_dispatch, [port(3000)]),
   thread_get_message(quit).
 

@@ -3,15 +3,18 @@
 <head>
    <meta charset="utf-8">
    <title>Checkers Player</title>
-   <!-- link rel="stylesheet" href="style.css" -->
+   <link rel="stylesheet" href="style.css">
 </head>
 <body>
    <canvas id="board" width="600" height="600">Your browser doesn't support canvas!?</canvas>
-   <p id="state"></p>
-   <p id="legals"></p>
-   <p id="aiplayer"></p>
-   <p id="reward"></p>
-   <p id="terminal"></p>
+   <div id="rightcol">
+       <p id="move">Move</p>
+       <p id="state">State</p>
+       <p id="legals">Legals</p>
+       <p id="aiplayer">AI Player</p>
+       <p id="reward">Reward</p>
+       <p id="terminal">Terminal</p>
+   </div>
 </body>
    <script src="script.js"></script>
 </html>

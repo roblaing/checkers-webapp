@@ -8,6 +8,7 @@
 
 :- http_handler('/', http_reply_file('index.html', []), []).
 :- http_handler('/script.js', http_reply_file('script.js', []), []).
+:- http_handler('/style.css', http_reply_file('style.css', []), []).
 :- http_handler('/move', move_handler, []).
 
 move_handler(Request) :-
@@ -29,7 +30,7 @@ move_handler(Request) :-
      Legals = noop)),
     findreward(red, NextState, Reward),
     format('Content-type: application/x-www-form-urlencoded~n~n', []),
-    format('state=~w&legals=~w&aiplayer=~w&reward=~w&terminal=~w', [Next, Legals, AIplayer, Reward, Terminal]).
+    format('move=~w&state=~w&legals=~w&aiplayer=~w&reward=~w&terminal=~w', [AIMove, Next, Legals, AIplayer, Reward, Terminal]).
 
 main :-
   consult('checkers.pl'),

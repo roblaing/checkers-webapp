@@ -1,5 +1,9 @@
 (function () {
     "use strict";
+    var movetxt = document.querySelector("#move");
+    var statetxt = document.querySelector("#state");
+    var rewardtxt = document.querySelector("#reward");
+    var terminaltxt = document.querySelector("#terminal");
 
     function Cell(board, column, row, colour) {
         this.board = board;
@@ -135,7 +139,6 @@
         this.grid.h3 = new Cell(this, "h", "3", white_square);
         this.grid.h2 = new Cell(this, "h", "2", black_square);
         this.grid.h1 = new Cell(this, "h", "1", white_square);
-        this.highlights = [];
         this.moveto = [];
     }
 
@@ -151,6 +154,9 @@
         });
         this.pieces = [];
         for (idx = 0; idx < state_array.length; idx += 1) {
+            if (state_array[idx][0] === "step") {
+              this.game.turn = state_array[idx][1];
+            }
             if ((state_array[idx][0] === "cell") && (state_array[idx][3] !== "b")) {
                 this.pieces.unshift(new Piece(this, state_array[idx][1], state_array[idx][2], state_array[idx][3]));
             }
@@ -164,14 +170,16 @@
         this.legals = {};
         for (idx = 0; idx < this.game.legals_array.length; idx += 1) {
             from_colrow = this.game.legals_array[idx][4] + this.game.legals_array[idx][5];
-            to_colrow = this.game.legals_array[idx][this.game.legals_array[0].length - 2] +
-                    this.game.legals_array[idx][this.game.legals_array[0].length - 1];
+            to_colrow = this.game.legals_array[idx][this.game.legals_array[idx].length - 2] +
+                    this.game.legals_array[idx][this.game.legals_array[idx].length - 1];
             if (this.legals.hasOwnProperty(from_colrow)) {
                 this.legals[from_colrow].unshift(to_colrow);
             } else {
                 this.legals[from_colrow] = [to_colrow];
             }
         }
+        statetxt.textContent = "You to move";
+        movetxt.textContent = this.game.turn;
         this.draw();
     };
 
@@ -288,7 +296,6 @@
                 "does(red,move(wp,f,3,e,4)),does(red,move(wp,f,3,g,4)),does(red,move(wp,h,3,g,4))]";
         this.board = new Board(this);
         this.board.update_state();
-        // this.board.draw();
     }
 
     Game.prototype.updateBoard = function () {
@@ -310,8 +317,10 @@
                 this.aiplayer = response_array[3].split("=")[1];
                 reward = response_array[4].split("=")[1];
                 terminal = response_array[5].split("=")[1];
-                var statetxt = document.querySelector("#state");
-                statetxt.textContent = "You to move";
+                // debugging start
+                rewardtxt.textContent = reward;
+                terminaltxt.textContent = terminal;
+                // debugging end
                 this.board.set_oldpos(from_colrow, to_colrow);
                 this.board.update_state();
             } else {
@@ -334,13 +343,14 @@
         this.httpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
         this.httpRequest.send(send_str);
         delete this.board.selected;
+        delete this.board.legals;
         this.board.highlights = [];
         this.board.draw();
-        var statetxt = document.querySelector("#state");
+        movetxt.textContent = String(Number(this.turn) + 1);
         statetxt.textContent = "Computer is thinking";
     };
 
     var game = new Game();
-    // game.board.draw();
 }());
+
 

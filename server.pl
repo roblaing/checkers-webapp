@@ -1,14 +1,13 @@
-#!/usr/bin/env swipl
+% swipl server.pl --port=20553 --pidfile=http.pid
 :- use_module(library(http/thread_httpd)).
 :- use_module(library(http/http_dispatch)).
+:- use_module(library(http/http_unix_daemon)).
 :- use_module(library(http/http_files)).
 :- use_module(library(http/http_client)).
 
 :- initialization main.
 
-:- http_handler('/', http_reply_file('index.html', []), []).
-:- http_handler('/script.js', http_reply_file('script.js', []), []).
-:- http_handler('/style.css', http_reply_file('style.css', []), []).
+:- http_handler(root(.), http_reply_from_files('.', []), [prefix]).
 :- http_handler('/move', move_handler, []).
 
 move_handler(Request) :-
@@ -36,6 +35,5 @@ main :-
   consult('checkers.pl'),
   consult('ggp.pl'),
   consult('ggp_minimax.pl'),
-  http_server(http_dispatch, [port(3000)]),
-  thread_get_message(quit).
+  http_daemon.
 

@@ -12,7 +12,7 @@ The code is at [https://github.com/roblaing/checkers-webapp](https://github.com/
 
 I use a linux machine and start the server at port 3000 with
 
-> ./server.pl &
+> swipl server.pl --port=3000 --pidfile=http.pid
 
 I assume it would also work on Windows.
 

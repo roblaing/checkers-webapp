@@ -16,8 +16,8 @@ utility(Node, Utility) :-
 get_children(Node, Children) :- 
     update_state(Node),
     true(control(Role)),
-    findlegals(Role, Legals),
-    maplist(findnext, Legals, Children).
+    findlegals(Role, Node, Legals),
+    maplist(findnext(Node), Legals, Children).
     
 minimax(Depth1, Timeout, Node, Value) :-
     get_time(Now),
@@ -68,8 +68,8 @@ tuple(A, B, [A, B]).
 bestmove(State, Bestmove) :-
     update_state(State),
     true(control(Role)),
-    findlegals(Role, Legals),
-    maplist(findnext, Legals, Children),
+    findlegals(Role, State, Legals),
+    maplist(findnext(State), Legals, Children),
     timeouts(Children, Timeouts),
     maplist(iterative_deepening(0), Timeouts, Children, Values),
     maplist(tuple, Values, Legals, Lst1),

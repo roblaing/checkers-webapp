@@ -149,6 +149,7 @@
     var row = board.ROWS[Math.floor((event.clientY - rect.top) / board.SQUARE_LENGTH)];
     var column = board.COLUMNS[Math.floor((event.clientX - rect.left) / board.SQUARE_LENGTH)];
     var move_str = "That is not a valid move";
+    var type;
     if ((this.from_row === undefined) && (this.clickables.indexOf("(" + column + "," + row + ")") !== -1)) {
       this.from_row = row;
       this.from_column = column;
@@ -164,14 +165,22 @@
         this.draw();
       } else {
         this.moves_potential.forEach(function (move) {
-          if ((move[2][4] === column) && (move[2][5] === row)) {
+          if ((move[2][move[2].length - 2] === column) && (move[2][move[2].length - 1] === row)) {
             move_str = list2prolog_string(move);
+            type = move[2][1];
           }
         });
         if (board.game.legals.indexOf(move_str) > -1) {
+          // show human move immediately while computer thinks         
+          board.game.state = board.game.state.replace("cell(" + board.from_column + "," + board.from_row + "," + type + ")",
+                                                     "cell(" + board.from_column + "," + board.from_row + "," + "b)");
+          board.game.state = board.game.state.replace("cell(" + column + "," + row + "," + "b)",
+                                                     "cell(" + column + "," + row + "," + type + ")");
+          this.set_pieces();
           delete board.from_row;
           delete board.from_column;
           delete board.moves_potential;
+          this.draw();
           if (this.game.moves_list === "") {
             board.game.moves_list = move_str;
           } else {
@@ -203,8 +212,8 @@
       });
       picked_cell[0].draw("greenyellow");
       this.moves_potential.forEach(function(move) {
-        var column = move[2][4];
-        var row = move[2][5];
+        var column = move[2][move[2].length - 2];
+        var row = move[2][move[2].length - 1];
         board.cells.forEach(function(cell) {
           if ((cell.column === column) && (cell.row === row)) {
             cell.draw("yellow");
@@ -270,7 +279,7 @@
           "&moves=" + encodeURIComponent("[noop]"); // bug needs fixing
       this.server_call(send_str);
     }
-    this.life_stage = "underway"; // maybe pick_piece?
+    this.life_stage = "underway"; // rather use gdl notation start, play, stop
   };
 
   Game.prototype.make_move = function (response) {
@@ -338,5 +347,4 @@
 
   var game = new Game();
 }());
-
 

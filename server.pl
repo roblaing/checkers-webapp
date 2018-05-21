@@ -49,7 +49,7 @@ move_handler(Request) :-
 
 main :-
   consult('checkers.pl'),
-  consult('ggp.pl'),
-  consult('ggp_minimax.pl'),
+  % consult('ggp.pl'),
+  consult('ggp_alphabeta.pl'),
   http_daemon.
 
